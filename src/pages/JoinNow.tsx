@@ -1,6 +1,8 @@
 import { motion } from 'motion/react';
 import { UserPlus, CheckCircle } from 'lucide-react';
 import { useState } from 'react';
+import axios from "axios";
+
 
 export default function JoinNow() {
   const [formData, setFormData] = useState({
@@ -21,16 +23,16 @@ export default function JoinNow() {
     });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    // TODO: Replace with actual backend API call
-    // Example: await fetch('/api/membership', { method: 'POST', body: JSON.stringify(formData) });
-    
-    console.log('Form submitted:', formData);
+  const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+
+  try {
+    const res = await axios.post("http://localhost:5000/api/memberships", formData);
+
+    console.log("SAVED:", res.data);
     setIsSubmitted(true);
-    
-    // Reset form after 5 seconds
+
+    // Reset after few seconds if you want
     setTimeout(() => {
       setIsSubmitted(false);
       setFormData({
@@ -42,7 +44,12 @@ export default function JoinNow() {
         trainingTime: '',
       });
     }, 5000);
-  };
+
+  } catch (error) {
+    console.error("Submit Failed:", error);
+    alert("Something went wrong! Check server.");
+  }
+};
 
   return (
     <div className="bg-white min-h-screen">
